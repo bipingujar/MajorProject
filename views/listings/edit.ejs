@@ -1,0 +1,199 @@
+<% layout("/layouts/boilerplate") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderstay</title>
+</head>
+<body>
+    <div class="row mt-3">
+        <div class="col-8 offset-2">
+
+        <h3>Edit your Listing</h3>
+        <form method="POST" action="/listings/<%= listing._id %>?_method=PUT"
+        novalidate
+        class="needs-validation"
+        enctype="multipart/form-data"
+        >
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input 
+            id="title"
+            name="listing[title]" 
+            value="<%= listing.title %>" 
+            type="text"  
+            class="form-control" 
+            required/>
+        <div class="valid-feedback">Title looks good!</div>
+    </div>
+                
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea 
+        id="description"
+        name="listing[description]" 
+        class="form-control" 
+        required><%= listing.description %></textarea>
+    <div class="invalid-feedback">Please enter a short description</div>
+</div>
+
+    <div class="mb-3">
+        <p class="mb-2">Current Listing Images</p>
+        <div class="d-flex flex-wrap gap-2">
+            <% for (let imageUrl of originalImageUrls) { %>
+                <img src="<%= imageUrl %>" style="height: 120px; width: 160px; object-fit: cover;" />
+            <% } %>
+        </div>
+    </div>
+
+                <div class="mb-3">
+                    <label for="images" class="form-label">Upload New Images (max 10 total)</label>
+                    <input
+                        id="images"
+                        name="listing[images][]"
+                        type="file"
+                        class="form-control"
+                        accept="image/*"
+                        multiple
+                    />
+                    <div class="form-text">New images are appended. Maximum 10 images per listing.</div>
+                </div>
+                
+                <div class="row">
+                    <div class="mb-3 col-md-4">
+                        <label for="price" class="form-label">Price</label>
+                        <input 
+                            id="price"
+                            name="listing[price]" 
+                            value="<%= listing.price %>" 
+                            type="number" 
+                            class="form-control" 
+                            required/>
+                        <div class="invalid-feedback">Price should be valid</div>
+                    </div>
+                    
+                    <div class="mb-3 col-md-8">
+                        <label for="country" class="form-label">Country</label>
+                        <input 
+                            id="country"
+                            name="listing[country]" 
+                            value="<%= listing.country %>" 
+                            type="text" 
+                            class="form-control" 
+                            required/>
+                        <div class="invalid-feedback">Country name should be valid</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select id="category" name="listing[category]" class="form-select" required>
+                            <option value="rooms" <%= listing.category === "rooms" ? "selected" : "" %>>Rooms</option>
+                            <option value="iconic-cities" <%= listing.category === "iconic-cities" ? "selected" : "" %>>Iconic Cities</option>
+                            <option value="mountains" <%= listing.category === "mountains" ? "selected" : "" %>>Mountains</option>
+                            <option value="castles" <%= listing.category === "castles" ? "selected" : "" %>>Castles</option>
+                            <option value="arctic" <%= listing.category === "arctic" ? "selected" : "" %>>Arctic</option>
+                            <option value="camping" <%= listing.category === "camping" ? "selected" : "" %>>Camping</option>
+                            <option value="farms" <%= listing.category === "farms" ? "selected" : "" %>>Farms</option>
+                            <option value="domes" <%= listing.category === "domes" ? "selected" : "" %>>Domes</option>
+                            <option value="boats" <%= listing.category === "boats" ? "selected" : "" %>>Boats</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a category.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input 
+                            id="location"
+                            name="listing[location]" 
+                            value="<%= listing.location %>" 
+                            type="text" 
+                            class="form-control" 
+                            required/>
+                        <div class="invalid-feedback">Location should be valid</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h5 class="mb-2">Amenities (Admin/Owner can set Yes/No)</h5>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Kitchen</label>
+                                <select class="form-select" name="listing[amenities][kitchen]">
+                                    <option value="false" <%= !listing.amenities?.kitchen ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.kitchen ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Wifi</label>
+                                <select class="form-select" name="listing[amenities][wifi]">
+                                    <option value="false" <%= !listing.amenities?.wifi ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.wifi ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Free Parking</label>
+                                <select class="form-select" name="listing[amenities][freeParking]">
+                                    <option value="false" <%= !listing.amenities?.freeParking ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.freeParking ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Pool</label>
+                                <select class="form-select" name="listing[amenities][pool]">
+                                    <option value="false" <%= !listing.amenities?.pool ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.pool ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Shared Sauna</label>
+                                <select class="form-select" name="listing[amenities][sharedSauna]">
+                                    <option value="false" <%= !listing.amenities?.sharedSauna ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.sharedSauna ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">TV</label>
+                                <select class="form-select" name="listing[amenities][tv]">
+                                    <option value="false" <%= !listing.amenities?.tv ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.tv ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Lift</label>
+                                <select class="form-select" name="listing[amenities][lift]">
+                                    <option value="false" <%= !listing.amenities?.lift ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.lift ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Washing Machine</label>
+                                <select class="form-select" name="listing[amenities][washingMachine]">
+                                    <option value="false" <%= !listing.amenities?.washingMachine ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.washingMachine ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Dryer (In Unit)</label>
+                                <select class="form-select" name="listing[amenities][dryer]">
+                                    <option value="false" <%= !listing.amenities?.dryer ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.dryer ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Security Cameras</label>
+                                <select class="form-select" name="listing[amenities][securityCameras]">
+                                    <option value="false" <%= !listing.amenities?.securityCameras ? "selected" : "" %>>No</option>
+                                    <option value="true" <%= listing.amenities?.securityCameras ? "selected" : "" %>>Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-dark edit-btn mt-3">Edit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

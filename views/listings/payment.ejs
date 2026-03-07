@@ -1,0 +1,169 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="payment-page-wrap">
+    <div class="payment-page-header">
+        <a href="/listings/<%= listing._id %>" class="btn btn-outline-dark btn-sm">Back</a>
+        <h3 class="mb-0">Complete Your Payment</h3>
+    </div>
+
+    <div class="payment-grid">
+        <section class="payment-card">
+            <h4 class="payment-card-title">Booking Details</h4>
+            <p class="mb-1"><strong>Listing:</strong> <%= listing.title %></p>
+            <p class="mb-1"><strong>Check-in:</strong> <%= booking.checkIn %></p>
+            <p class="mb-1"><strong>Check-out:</strong> <%= booking.checkOut %></p>
+            <p class="mb-1"><strong>Guests:</strong> <%= booking.guests %></p>
+            <p class="mb-1"><strong>Nights:</strong> <%= booking.nights %></p>
+            <hr />
+            <p class="mb-0 payment-total-line">
+                <span>Total</span>
+                <strong>INR <%= booking.totalInr.toLocaleString("en-IN") %></strong>
+            </p>
+        </section>
+
+        <section class="payment-card">
+            <h4 class="payment-card-title">Choose Payment Method</h4>
+            <form id="paymentReserveForm" method="POST" action="/listings/<%= listing._id %>/reserve">
+                <input type="hidden" name="booking[checkIn]" value="<%= booking.checkIn %>" />
+                <input type="hidden" name="booking[checkOut]" value="<%= booking.checkOut %>" />
+                <input type="hidden" name="booking[guests]" value="<%= booking.guests %>" />
+                <input type="hidden" name="payment[orderId]" id="paymentOrderIdInput" />
+                <input type="hidden" name="payment[paymentId]" id="paymentIdInput" />
+                <input type="hidden" name="payment[signature]" id="paymentSignatureInput" />
+
+                <div class="payment-method-grid">
+                    <label class="payment-method-item">
+                        <input type="radio" name="booking[paymentMethod]" value="upi" checked />
+                        <span>UPI</span>
+                    </label>
+                    <label class="payment-method-item">
+                        <input type="radio" name="booking[paymentMethod]" value="card" />
+                        <span>Card</span>
+                    </label>
+                    <label class="payment-method-item">
+                        <input type="radio" name="booking[paymentMethod]" value="netbanking" />
+                        <span>Net Banking</span>
+                    </label>
+                    <label class="payment-method-item">
+                        <input type="radio" name="booking[paymentMethod]" value="wallet" />
+                        <span>Wallet</span>
+                    </label>
+                </div>
+
+                <button type="button" class="booking-check-btn payment-submit-btn" id="payNowBtn">
+                    Pay & Reserve
+                </button>
+                <p class="booking-status-text mt-2 mb-0" id="paymentStatusText"></p>
+            </form>
+        </section>
+    </div>
+</div>
+
+<script>
+    const razorpayKeyId = "<%= razorpayKeyId %>";
+    const listingId = "<%= listing._id %>";
+    const listingTitle = <%- JSON.stringify(listing.title || "") %>;
+    const payerName = <%- JSON.stringify(currUser ? currUser.username : "") %>;
+    const payerEmail = <%- JSON.stringify(currUser && currUser.email ? currUser.email : "") %>;
+
+    const payNowBtn = document.getElementById("payNowBtn");
+    const paymentStatusText = document.getElementById("paymentStatusText");
+    const paymentReserveForm = document.getElementById("paymentReserveForm");
+    const paymentOrderIdInput = document.getElementById("paymentOrderIdInput");
+    const paymentIdInput = document.getElementById("paymentIdInput");
+    const paymentSignatureInput = document.getElementById("paymentSignatureInput");
+
+    if (payNowBtn && paymentReserveForm) {
+        payNowBtn.addEventListener("click", async () => {
+            const selectedPaymentMethod = paymentReserveForm.querySelector(
+                'input[name="booking[paymentMethod]"]:checked'
+            );
+
+            if (!selectedPaymentMethod) {
+                paymentStatusText.textContent = "Please select a payment method.";
+                return;
+            }
+
+            if (!razorpayKeyId) {
+                paymentStatusText.textContent = "Payment gateway is not configured.";
+                return;
+            }
+
+            if (typeof Razorpay === "undefined") {
+                paymentStatusText.textContent = "Payment SDK failed to load. Please refresh and try again.";
+                return;
+            }
+
+            payNowBtn.disabled = true;
+            payNowBtn.textContent = "Opening payment...";
+            paymentStatusText.textContent = "";
+
+            try {
+                const payload = new URLSearchParams({
+                    "booking[checkIn]": paymentReserveForm.querySelector('input[name="booking[checkIn]"]').value,
+                    "booking[checkOut]": paymentReserveForm.querySelector('input[name="booking[checkOut]"]').value,
+                    "booking[paymentMethod]": selectedPaymentMethod.value,
+                });
+
+                const orderResponse = await fetch(`/listings/${listingId}/payment/order`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                    },
+                    body: payload.toString(),
+                });
+
+                let orderData = {};
+                try {
+                    orderData = await orderResponse.json();
+                } catch (parseError) {
+                    throw new Error("Unable to read payment response.");
+                }
+
+                if (!orderResponse.ok || !orderData.success) {
+                    throw new Error(orderData.message || "Unable to start payment.");
+                }
+
+                const razorpayOptions = {
+                    key: orderData.keyId || razorpayKeyId,
+                    amount: orderData.amount,
+                    currency: orderData.currency || "INR",
+                    name: "Wanderstay",
+                    description: orderData.description || `Reservation for ${listingTitle}`,
+                    order_id: orderData.orderId,
+                    prefill: {
+                        name: payerName,
+                        email: payerEmail,
+                    },
+                    notes: {
+                        listingTitle,
+                        requestedMethod: selectedPaymentMethod.value,
+                    },
+                    theme: { color: "#fe424d" },
+                    modal: {
+                        ondismiss: function () {
+                            paymentStatusText.textContent = "Payment was cancelled.";
+                        },
+                    },
+                    handler: function (response) {
+                        paymentOrderIdInput.value = response.razorpay_order_id || "";
+                        paymentIdInput.value = response.razorpay_payment_id || "";
+                        paymentSignatureInput.value = response.razorpay_signature || "";
+                        paymentReserveForm.submit();
+                    },
+                };
+
+                const razorpayInstance = new Razorpay(razorpayOptions);
+                razorpayInstance.open();
+            } catch (err) {
+                paymentStatusText.textContent = err.message || "Unable to complete payment.";
+            } finally {
+                payNowBtn.disabled = false;
+                payNowBtn.textContent = "Pay & Reserve";
+            }
+        });
+    }
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+

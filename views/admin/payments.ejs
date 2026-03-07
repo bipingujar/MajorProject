@@ -1,0 +1,69 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="admin-payments-wrap">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h3 class="mb-0">Admin Payments</h3>
+        <a href="/listings" class="btn btn-outline-dark btn-sm">Back to Listings</a>
+    </div>
+
+    <% if (!paymentRows.length) { %>
+        <div class="alert alert-info">No payment records found yet.</div>
+    <% } %>
+
+    <% for (const row of paymentRows) { %>
+        <div class="admin-payment-card">
+            <div class="admin-payment-head">
+                <div>
+                    <h5 class="mb-1"><%= row.listingTitle %></h5>
+                    <p class="mb-0 text-muted">Host: <%= row.hostUsername %> | Guest: <%= row.guestUsername %></p>
+                </div>
+                <span class="badge <%= row.paymentStatus === 'captured' ? 'text-bg-success' : 'text-bg-secondary' %>">
+                    <%= row.paymentStatus %>
+                </span>
+            </div>
+
+            <div class="admin-payment-meta">
+                <p class="mb-1"><strong>Amount:</strong> INR <%= (row.paymentAmountPaise / 100).toLocaleString("en-IN") %></p>
+                <p class="mb-1"><strong>Method:</strong> <%= row.paymentMethod %></p>
+                <p class="mb-1"><strong>Payment ID:</strong> <%= row.paymentId %></p>
+                <p class="mb-1"><strong>Order ID:</strong> <%= row.paymentOrderId %></p>
+                <p class="mb-1"><strong>Stay:</strong> <%= new Date(row.checkIn).toISOString().slice(0, 10) %> to <%= new Date(row.checkOut).toISOString().slice(0, 10) %></p>
+                <p class="mb-1"><strong>Guest Email:</strong> <%= row.guestEmail || "-" %></p>
+                <p class="mb-0"><strong>Received by Admin:</strong> <%= row.adminReceived ? "Yes" : "No" %></p>
+            </div>
+
+            <form method="POST" action="/admin/payments/<%= row.listingId %>/<%= row.bookingId %>">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <label class="form-label">Reference Number</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="adminReference"
+                            value="<%= row.adminReference %>"
+                            placeholder="Bank/ledger reference"
+                        />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Admin Note</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="adminNote"
+                            value="<%= row.adminNote %>"
+                            placeholder="Add details about received payment"
+                        />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Received</label>
+                        <select class="form-select" name="adminReceived">
+                            <option value="false" <%= row.adminReceived ? "" : "selected" %>>No</option>
+                            <option value="true" <%= row.adminReceived ? "selected" : "" %>>Yes</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-dark btn-sm mt-2">Save Details</button>
+            </form>
+        </div>
+    <% } %>
+</div>

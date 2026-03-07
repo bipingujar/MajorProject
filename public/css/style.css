@@ -1,0 +1,773 @@
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--page-bg);
+    color: var(--text-color);
+}
+
+:root {
+    --page-bg: #ffffff;
+    --text-color: #222222;
+    --navbar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --muted-bg: #ebebeb;
+    --border-color: #d9d9d9;
+}
+
+html[data-theme="dark"] {
+    --page-bg: #111418;
+    --text-color: #ebedf0;
+    --navbar-bg: #1b2027;
+    --card-bg: #1b2027;
+    --muted-bg: #1b2027;
+    --border-color: #303846;
+}
+
+.container {
+    flex: 1;
+}
+
+.light-text {
+  font-weight: 300 !important;
+}
+
+.regular-text {
+  font-weight: 400 !important;
+}
+
+.medium-text {
+  font-weight: 500 !important;
+}
+
+.semibold-text {
+  font-weight: 600 !important;
+}
+
+.navbar {
+    height: 5rem;
+    background-color: var(--navbar-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.fa-compass {
+    color: #fe424d;
+    font-size: 2rem;
+}
+
+.nav-link {
+    color: var(--text-color) !important;
+}
+
+/* footer */
+.f-info-links a {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.f-info-links a:hover {
+    text-decoration: underline;
+}
+
+.f-info-links, 
+.f-info-socials, 
+.f-info-brand {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--muted-bg);
+}
+
+.f-info-socials i {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+}
+
+.f-info {
+    text-align: center;
+    height: 8rem;
+    background-color: var(--muted-bg);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly; /* horizontal spacing */
+    align-items: center; /* vertical centering */
+}
+
+/* Cards */
+.listing-card {
+    border: none !important;
+    margin-bottom: 2rem;
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+}
+
+.card-img-top {
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+.card-body {
+    padding: 0 !important;
+}
+
+.card-text p {
+    font-weight: 400 !important;
+}
+
+.listing-link {
+    text-decoration: none !important;
+}
+
+/* Card Effect */
+.card-img-overlay {
+    opacity: 0;
+}
+
+.card-img-overlay:hover {
+    opacity: 0.2;
+    background-color: white;
+}
+
+/* New Page */
+
+.add-btn {
+    background-color: #fe424d !important;
+    border: none !important;
+}
+
+/* Edit Page */
+.edit-btn {
+    background-color: #fe424d !important;
+    border: none !important;
+}
+
+/* Show Page */
+.show-img {
+    height: 30vh;
+}
+
+.listing-photo-link {
+    display: block;
+    cursor: zoom-in;
+}
+
+.btns {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.10rem;
+    margin-bottom: 0.55rem;
+    align-items: center;
+}
+
+.show-card {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.show-card .wishlist-btn {
+    background-color: #fe424d !important;
+    border-color: #fe424d !important;
+    color: #fff !important;
+}
+
+.show-card .wishlist-btn:hover,
+.show-card .wishlist-btn:focus {
+    background-color: #e63a45 !important;
+    border-color: #e63a45 !important;
+    color: #fff !important;
+}
+
+.amenities-section {
+    margin: 1rem 0 0.8rem;
+}
+
+.amenities-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+.amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1.2rem;
+}
+
+.amenity-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.05rem;
+    color: #1d1d1d;
+}
+
+.amenity-item i {
+    font-size: 1.05rem;
+    color: #2b2b2b;
+    width: 1.1rem;
+    text-align: center;
+}
+
+.booking-card {
+    max-width: 380px;
+    background-color: #f5f5f5;
+    border: 1px solid #d5d5d5;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    padding: 1rem;
+}
+
+.booking-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: #222;
+}
+
+.booking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.booking-dates-shell {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 2px solid #2d2d2d;
+    border-radius: 0.95rem;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.booking-date-cell {
+    padding: 0.5rem 0.6rem;
+}
+
+.booking-date-cell-right {
+    border-left: 1px solid #b9b9b9;
+}
+
+.booking-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #1f1f1f;
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.02em;
+}
+
+.booking-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 0;
+    background: transparent;
+    font-size: 16px;
+    color: #555;
+}
+
+.booking-guests-shell {
+    border: 1px solid #b9b9b9;
+    border-radius: 0.95rem;
+    background: #fff;
+    padding: 0.5rem 0.6rem;
+}
+
+.booking-guests-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.booking-guests-select {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+    font-size: 16px;
+    color: #222;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 0.6rem;
+}
+
+.booking-guests-arrow {
+    pointer-events: none;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: #222;
+}
+
+.booking-check-btn {
+    margin-top: 0.25rem;
+    width: 83.333333%;
+    max-width: 320px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff2f66 0%, #e5007d 100%);
+    color: #fff;
+    padding: 0.65rem 0.9rem;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.booking-check-btn:hover {
+    background: linear-gradient(135deg, #ff1758 0%, #d80072 100%);
+}
+
+.booking-check-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.booking-payment-shell {
+    border: 1px solid #b9b9b9;
+    border-radius: 0.95rem;
+    background: #fff;
+    padding: 0.6rem;
+}
+
+.booking-payment-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem 0.6rem;
+}
+
+.booking-payment-option {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.92rem;
+    color: #222;
+}
+
+.booking-status-text {
+    font-size: 0.9rem;
+    color: #5a5a5a;
+    min-height: 1.1rem;
+}
+
+.payment-page-wrap {
+    max-width: 980px;
+    margin: 1.2rem auto 2rem;
+    padding: 0 0.75rem;
+}
+
+.payment-page-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.payment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.payment-card {
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--card-bg);
+    padding: 1rem;
+}
+
+.payment-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+.payment-total-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.05rem;
+}
+
+.payment-method-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem 0.65rem;
+    margin-bottom: 0.9rem;
+}
+
+.payment-method-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid #d2d2d2;
+    border-radius: 10px;
+    padding: 0.55rem 0.65rem;
+}
+
+.payment-submit-btn {
+    width: 100%;
+}
+
+.admin-payments-wrap {
+    max-width: 1080px;
+    margin: 1.2rem auto 2rem;
+    padding: 0 0.75rem;
+}
+
+.admin-payment-card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--card-bg);
+    padding: 0.95rem;
+    margin-bottom: 0.9rem;
+}
+
+.admin-payment-head {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-bottom: 0.65rem;
+}
+
+.admin-payment-meta {
+    border: 1px dashed #d6d6d6;
+    border-radius: 10px;
+    padding: 0.65rem;
+    margin-bottom: 0.75rem;
+    background: #fafafa;
+}
+
+@media (max-width: 768px) {
+    .amenities-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-card {
+        max-width: 100%;
+        padding: 1.2rem 1rem;
+    }
+
+    .payment-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.photos-page-wrap {
+    max-width: 1040px;
+    margin: 1.5rem auto 2.5rem;
+    padding: 0 0.75rem;
+}
+
+.photos-header-row {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 0.8rem;
+}
+
+.photos-title {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.photos-main-shell {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 0.7rem;
+}
+
+.photos-main-image {
+    width: 100%;
+    max-height: 74vh;
+    object-fit: contain;
+    display: block;
+}
+
+.photos-nav-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.photos-nav-row a:last-child {
+    justify-self: end;
+}
+
+.photos-nav-row .btn {
+    justify-self: start;
+    width: fit-content;
+    background-color: #fe424d;
+    border-color: #fe424d;
+    color: #fff;
+}
+
+.photos-nav-row .btn:hover,
+.photos-nav-row .btn:focus {
+    background-color: #e63a45;
+    border-color: #e63a45;
+    color: #fff;
+}
+
+.photos-counter {
+    font-weight: 600;
+    color: #1f1f1f;
+}
+
+.photos-thumb-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.55rem;
+}
+
+.photos-thumb-link {
+    display: block;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.photos-thumb-link.is-active {
+    border-color: #fe424d;
+}
+
+.photos-thumb-image {
+    width: 100%;
+    height: 84px;
+    object-fit: cover;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .photos-thumb-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Map */
+#map{
+    height: 400px;
+    width: 80vh;
+}
+
+.f-info-links {
+    gap: 1rem;
+}
+
+.chatbot-toggle-btn {
+    position: fixed;
+    right: 1.15rem;
+    bottom: 1.15rem;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: #fe424d;
+    color: #fff;
+    font-size: 1rem;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+    z-index: 1050;
+}
+
+.chatbot-toggle-btn:hover {
+    background: #e63a45;
+}
+
+.chatbot-widget {
+    position: fixed;
+    right: 1.15rem;
+    bottom: 4.25rem;
+    width: min(360px, calc(100vw - 2rem));
+    height: 470px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1050;
+}
+
+.chatbot-widget.is-open {
+    display: flex;
+}
+
+.chatbot-header {
+    padding: 0.75rem 0.9rem;
+    background: #fe424d;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chatbot-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.chatbot-close-btn {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.chatbot-messages {
+    flex: 1;
+    padding: 0.8rem;
+    overflow-y: auto;
+    background: var(--page-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.chatbot-msg {
+    max-width: 86%;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    word-wrap: break-word;
+}
+
+.chatbot-msg-user {
+    align-self: flex-end;
+    background: #222;
+    color: #fff;
+}
+
+.chatbot-msg-bot {
+    align-self: flex-start;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.chatbot-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.chatbot-link-chip {
+    display: block;
+    text-decoration: none;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.5rem 0.6rem;
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+.chatbot-link-chip:hover {
+    border-color: #fe424d;
+    color: #fe424d;
+}
+
+.chatbot-link-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 0.05rem;
+}
+
+.chatbot-link-subtitle {
+    font-size: 0.78rem;
+    color: #9ca3af;
+}
+
+.chatbot-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+    padding: 0.7rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--card-bg);
+}
+
+.chatbot-input {
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.chatbot-input:focus {
+    border-color: #fe424d;
+}
+
+html[data-theme="dark"] .theme-toggle-btn {
+    background: #242b34;
+    border-color: #374151;
+    color: #f4f4f5;
+}
+
+html[data-theme="dark"] .search-inp,
+html[data-theme="dark"] .form-control {
+    background-color: #1f2937;
+    color: #f9fafb;
+    border-color: #374151;
+}
+
+html[data-theme="dark"] .navbar-toggler {
+    border-color: #374151;
+}
+
+html[data-theme="dark"] .card-text,
+html[data-theme="dark"] p,
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="dark"] span,
+html[data-theme="dark"] label {
+    color: var(--text-color);
+}
+
+.chatbot-send-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 0.5rem 0.9rem;
+    background: #fe424d;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.chatbot-send-btn:hover {
+    background: #e63a45;
+}
+
+.chatbot-send-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+@media (max-width: 575px) {
+    .chatbot-widget {
+        right: 0.75rem;
+        bottom: 4.15rem;
+        height: 65vh;
+    }
+
+    .chatbot-toggle-btn {
+        right: 0.75rem;
+        bottom: 0.8rem;
+    }
+}

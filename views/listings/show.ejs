@@ -1,0 +1,329 @@
+<% layout("/layouts/boilerplate") %>
+
+<body>
+    <script>
+        const mapToken = "<%= mapToken %>";
+        const coordinates = <%- JSON.stringify(listing.geometry.coordinates) %>;
+    </script>
+    <% const listingImages = (listing.images && listing.images.length) ? listing.images : (listing.image ? [listing.image] : []); %>
+    <% const todayDate = new Date().toISOString().split("T")[0]; %>
+    <% const amenityItems = [
+        { key: "kitchen", label: "Kitchen", icon: "fa-solid fa-utensils" },
+        { key: "wifi", label: "Wifi", icon: "fa-solid fa-wifi" },
+        { key: "freeParking", label: "Free parking on premises", icon: "fa-solid fa-car" },
+        { key: "pool", label: "Pool", icon: "fa-solid fa-water-ladder" },
+        { key: "sharedSauna", label: "Shared sauna", icon: "fa-solid fa-hot-tub-person" },
+        { key: "tv", label: "TV", icon: "fa-solid fa-tv" },
+        { key: "lift", label: "Lift", icon: "fa-solid fa-elevator" },
+        { key: "washingMachine", label: "Washing machine", icon: "fa-solid fa-soap" },
+        { key: "dryer", label: "Dryer - In unit", icon: "fa-solid fa-wind" },
+        { key: "securityCameras", label: "Exterior security cameras", icon: "fa-solid fa-video" }
+    ]; %>
+    <% const availableAmenities = amenityItems.filter((item) => listing.amenities && listing.amenities[item.key]); %>
+    <div class="row mt-3">
+        <div class="col-8 offset-3">
+            <h3><%= listing.title %></h3>
+        </div>
+
+        <div class="card col-6 offset-3 show-card listing-card">
+            <% if (listingImages.length > 0) { %>
+                <div id="listingImagesCarousel" class="carousel slide">
+                    <div class="carousel-inner">
+                        <% for (let i = 0; i < listingImages.length; i++) { %>
+                            <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                                <a href="/listings/<%= listing._id %>/photos?index=<%= i %>" class="listing-photo-link">
+                                    <img
+                                        src="<%= listingImages[i].url %>"
+                                        class="d-block w-100 show-img"
+                                        alt="listing_image_<%= i + 1 %>"
+                                    />
+                                </a>
+                            </div>
+                        <% } %>
+                    </div>
+                    <% if (listingImages.length > 1) { %>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#listingImagesCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#listingImagesCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    <% } %>
+                </div>
+            <% } %>
+
+            <div class="card-body">
+                <button
+                    type="button"
+                    class="btn btn-outline-danger wishlist-btn mb-3"
+                    data-listing-id="<%= listing._id %>"
+                    data-authenticated="<%= currUser ? 'true' : 'false' %>"
+                    data-wishlisted="<%= isWishlisted ? 'true' : 'false' %>"
+                >
+                    <i class="<%= isWishlisted ? 'fa-solid' : 'fa-regular' %> fa-heart"></i>
+                    <span><%= isWishlisted ? 'Wishlisted' : 'Add to Wishlist' %></span>
+                </button>
+                <p class="card-text">Owned by<i><%= listing.owner.username %></i></p>
+                <p class="card-text"> <%= listing.description %> </p>
+                <p class="card-text"> 
+                    &#8377; <%= listing.price.toLocaleString("en-IN")  %> </p>
+                <p class="card-text"> <%= listing.location %> </p>
+                <p class="card-text"> <%= listing.country %> </p>
+                <div class="amenities-section">
+                    <h4 class="amenities-title">What this place offers</h4>
+                    <% if (availableAmenities.length) { %>
+                        <div class="amenities-grid">
+                            <% for (let amenity of availableAmenities) { %>
+                                <div class="amenity-item">
+                                    <i class="<%= amenity.icon %>"></i>
+                                    <span><%= amenity.label %></span>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% } else { %>
+                        <p class="text-muted mb-0">No amenities added by owner yet.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <br />
+
+<% if(currUser && listing.owner._id.equals(currUser._id)) {%>      
+
+    <div class="btns">
+        <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark col-1 offset-3 edit-btn">Edit</a>
+    
+        <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+            <button class="btn btn-dark offset-5">Delete</button>
+        </form>
+    </div>
+
+<% } %> 
+
+<div class="col-8 offset-3 mb-3">
+    <div class="booking-card">
+        <h4 class="booking-card-title">Add dates for prices</h4>
+        <form class="booking-form" novalidate>
+            <div class="booking-dates-shell">
+                <div class="booking-date-cell">
+                    <label for="checkInDate" class="booking-label">CHECK-IN</label>
+                    <input
+                        id="checkInDate"
+                        type="date"
+                        class="booking-input"
+                        name="booking[checkIn]"
+                        min="<%= todayDate %>"
+                        required
+                    />
+                </div>
+                <div class="booking-date-cell booking-date-cell-right">
+                    <label for="checkOutDate" class="booking-label">CHECKOUT</label>
+                    <input
+                        id="checkOutDate"
+                        type="date"
+                        class="booking-input"
+                        name="booking[checkOut]"
+                        min="<%= todayDate %>"
+                        required
+                    />
+                </div>
+            </div>
+
+            <div class="booking-guests-shell">
+                <label for="bookingGuests" class="booking-label">GUESTS</label>
+                <div class="booking-guests-row">
+                    <select id="bookingGuests" class="booking-guests-select" name="booking[guests]">
+                        <option value="1">1 guest</option>
+                        <option value="2">2 guests</option>
+                        <option value="3">3 guests</option>
+                        <option value="4">4 guests</option>
+                        <option value="5">5 guests</option>
+                        <option value="6">6 guests</option>
+                        <option value="7">7 guests</option>
+                        <option value="8">8 guests</option>
+                        <option value="9">9 guests</option>
+                        <option value="10">10 guests</option>
+                    </select>
+                    <span class="booking-guests-arrow">&#709;</span>
+                </div>
+            </div>
+            <button
+                type="button"
+                class="booking-check-btn"
+                id="bookingActionBtn"
+                data-listing-id="<%= listing._id %>"
+                data-authenticated="<%= currUser ? 'true' : 'false' %>"
+            >
+                Check availability
+            </button>
+            <p class="booking-status-text mb-0" id="bookingStatusText"></p>
+        </form>
+    </div>
+</div>
+
+<div class="col-8 offset-3 mb-3">
+    <% if(currUser) {%>
+        <hr />
+    <h4>Leave a Review</h4>
+    <form 
+    action="/listings/<%= listing.id %>/reviews" 
+    method="POST" 
+    novalidate 
+    class="needs-validation"
+    >
+<div class="mb-3 mt-3">
+    <label for="rating" class="form-label">Rating</lable> 
+    <fieldset class="starability-slot">
+        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+        <label for="first-rate1" title="Terrible">1 star</label>
+        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+        <label for="first-rate2" title="Not good">2 stars</label>
+        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+        <label for="first-rate3" title="Average">3 stars</label>
+        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+        <label for="first-rate4" title="Very good">4 stars</label>
+        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+        <label for="first-rate5" title="Amazing">5 stars</label>
+    </fieldset>
+</div>
+<div class="mb-3 mt-3">
+    <label for="Comment" class="form-label">Comments</label>
+    <textarea 
+    name="review[comment]" 
+    id="Comment" 
+    cols="30" 
+    rows="5" 
+    class="form-control"
+    required
+></textarea>
+    <div class="invalid-feedback">
+        Please add some comments for review
+    </div>
+</div>
+    <button class="btn btn-outline-dark">Submit</button>
+</form>
+<hr/>
+<% } %>
+
+<% if(listing.reviews.length > 0) { %>
+<div class="row">
+    <p><b>All Reviews</b></p>
+ <% for (let review of listing.reviews) { %>
+    <div class="card col-5 ms-3 mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@<%= review.author.username %></h5>
+            <p 
+            class="starability-result card-text" 
+            data-rating="<%= review.rating %>"
+            ></p>
+            <p class="card-text"><%= review.comment %></p>
+        <form 
+        class="mb-3" 
+        method="POST" 
+        action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+            <button class="btn btn-sm btn-dark">Delete</button>
+        </form>
+        </div>
+    </div>
+  <% } %>
+    </div>
+    <% } %>
+</div>
+<div class="col-8 offset-3 mb-3">
+        <h3>Where you'll be</h3>
+        <div id="map"></div>
+    </div>
+</div>
+</body>
+
+<script>
+    const checkInInput = document.getElementById("checkInDate");
+    const checkOutInput = document.getElementById("checkOutDate");
+    const bookingActionBtn = document.getElementById("bookingActionBtn");
+    const bookingStatusText = document.getElementById("bookingStatusText");
+    const bookingForm = bookingActionBtn ? bookingActionBtn.closest("form") : null;
+
+    const resetBookingAction = (statusMessage = "") => {
+        if (bookingActionBtn) {
+            bookingActionBtn.textContent = "Check availability";
+            bookingActionBtn.type = "button";
+        }
+        if (bookingStatusText) {
+            bookingStatusText.textContent = statusMessage;
+        }
+    };
+
+    if (checkInInput && checkOutInput) {
+        checkInInput.addEventListener("change", () => {
+            const selectedCheckIn = checkInInput.value;
+            if (!selectedCheckIn) return;
+            checkOutInput.min = selectedCheckIn;
+            if (checkOutInput.value && checkOutInput.value < selectedCheckIn) {
+                checkOutInput.value = selectedCheckIn;
+            }
+            resetBookingAction("");
+        });
+
+        checkOutInput.addEventListener("change", () => {
+            if (!bookingActionBtn) return;
+            resetBookingAction("");
+        });
+    }
+
+    if (bookingActionBtn && checkInInput && checkOutInput && bookingForm) {
+        bookingActionBtn.addEventListener("click", async () => {
+            const checkIn = checkInInput.value;
+            const checkOut = checkOutInput.value;
+            const guests = document.getElementById("bookingGuests")?.value || "1";
+            if (!checkIn || !checkOut) {
+                if (bookingStatusText) {
+                    bookingStatusText.textContent = "Please select check-in and checkout dates.";
+                }
+                return;
+            }
+
+            if (checkOut <= checkIn) {
+                if (bookingStatusText) {
+                    bookingStatusText.textContent = "Checkout must be after check-in.";
+                }
+                return;
+            }
+
+            const listingId = bookingActionBtn.dataset.listingId;
+
+            bookingActionBtn.disabled = true;
+            bookingActionBtn.textContent = "Checking...";
+
+            try {
+                const params = new URLSearchParams({ checkIn, checkOut });
+                const response = await fetch(`/listings/${listingId}/availability?${params.toString()}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Unable to check availability.");
+                }
+
+                if (data.available) {
+                    const paymentParams = new URLSearchParams({ checkIn, checkOut, guests });
+                    window.location.href = `/listings/${listingId}/payment?${paymentParams.toString()}`;
+                    return;
+                } else {
+                    resetBookingAction();
+                }
+
+                if (bookingStatusText) {
+                    bookingStatusText.textContent = data.message || "";
+                }
+            } catch (err) {
+                resetBookingAction(err.message || "Unable to check availability.");
+            } finally {
+                bookingActionBtn.disabled = false;
+            }
+        });
+    }
+</script>
+
+<script src="/js/map.js"></script>

@@ -1,0 +1,41 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="photos-page-wrap">
+  <div class="photos-header-row">
+    <a href="/listings/<%= listing._id %>" class="btn btn-outline-dark btn-sm">Back to listing</a>
+    <h2 class="photos-title mb-0"><%= listing.title %></h2>
+  </div>
+
+  <div class="photos-main-shell">
+    <img
+      src="<%= listingImages[activeIndex].url %>"
+      class="photos-main-image"
+      alt="listing_photo_<%= activeIndex + 1 %>"
+    />
+  </div>
+
+  <div class="photos-nav-row">
+    <% if (activeIndex > 0) { %>
+      <a class="btn btn-dark btn-sm" href="/listings/<%= listing._id %>/photos?index=<%= activeIndex - 1 %>">Previous</a>
+    <% } else { %>
+      <span></span>
+    <% } %>
+    <span class="photos-counter"><%= activeIndex + 1 %> / <%= listingImages.length %></span>
+    <% if (activeIndex < listingImages.length - 1) { %>
+      <a class="btn btn-dark btn-sm" href="/listings/<%= listing._id %>/photos?index=<%= activeIndex + 1 %>">Next</a>
+    <% } else { %>
+      <span></span>
+    <% } %>
+  </div>
+
+  <div class="photos-thumb-grid">
+    <% for (let i = 0; i < listingImages.length; i++) { %>
+      <a
+        href="/listings/<%= listing._id %>/photos?index=<%= i %>"
+        class="photos-thumb-link <%= i === activeIndex ? 'is-active' : '' %>"
+      >
+        <img src="<%= listingImages[i].url %>" alt="listing_thumb_<%= i + 1 %>" class="photos-thumb-image" />
+      </a>
+    <% } %>
+  </div>
+</div>
