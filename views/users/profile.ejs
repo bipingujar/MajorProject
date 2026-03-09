@@ -192,6 +192,23 @@
     margin-top: 0.15rem;
   }
 
+  .admin-payment-settings-panel {
+    border: 1px solid #d3dce6;
+    background: #eef3f8;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .admin-upi-qr-preview {
+    width: 150px;
+    max-width: 100%;
+    border-radius: 12px;
+    border: 1px solid #d5dce4;
+    background: #fff;
+    padding: 0.2rem;
+  }
+
   .profile-top-actions {
     display: flex;
     justify-content: flex-end;
@@ -239,6 +256,16 @@
   html[data-theme="dark"] .wishlist-item {
     background: #0f172a;
     border-color: #334155;
+  }
+
+  html[data-theme="dark"] .admin-payment-settings-panel {
+    background: #111827;
+    border-color: #334155;
+  }
+
+  html[data-theme="dark"] .admin-upi-qr-preview {
+    border-color: #334155;
+    background: #0f172a;
   }
 
   @media (max-width: 991px) {
@@ -376,6 +403,50 @@
         <button class="profile-action-btn" type="submit">Update</button>
       </form>
     </div>
+
+    <% if (user.isAdmin) { %>
+      <h3 class="profile-section-title">Admin Payment Settings</h3>
+      <div class="admin-payment-settings-panel">
+        <form method="POST" action="/profile/payment-settings" enctype="multipart/form-data">
+          <div class="profile-field">
+            <label for="adminUpiIdInput"><b>UPI ID</b></label>
+            <div class="profile-input-row">
+              <input
+                id="adminUpiIdInput"
+                class="profile-input"
+                type="text"
+                name="payment[upiId]"
+                value="<%= paymentSettings?.upiId || '' %>"
+                placeholder="example@upi"
+              />
+            </div>
+          </div>
+
+          <div class="profile-field">
+            <label for="adminQrImageInput"><b>QR Image</b></label>
+            <div class="profile-input-row">
+              <input
+                id="adminQrImageInput"
+                class="form-control"
+                type="file"
+                name="payment[qrImage]"
+                accept="image/*"
+              />
+            </div>
+            <small class="text-muted">Maximum file size: 2MB</small>
+          </div>
+
+          <% if (paymentSettings?.qrImage?.url) { %>
+            <div class="profile-field">
+              <p class="mb-1"><strong>Current QR:</strong></p>
+              <img src="<%= paymentSettings.qrImage.url %>" alt="Admin UPI QR" class="admin-upi-qr-preview" />
+            </div>
+          <% } %>
+
+          <button class="profile-action-btn" type="submit">Save Payment Settings</button>
+        </form>
+      </div>
+    <% } %>
 
     <h3 class="profile-section-title">My Uploaded Wanderstay listings</h3>
     <% if (ownerListings && ownerListings.length) { %>

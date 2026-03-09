@@ -6,8 +6,17 @@ const nodemailer = require("nodemailer");
 
 const User = require("../models/user.js");
 const wrapAsync = require("../utils/wrapAsync.js");
-const { isLoggedIn, saveRedirectUrl } = require("../middleware.js");
+const { isLoggedIn, isAdmin, saveRedirectUrl } = require("../middleware.js");
 const userController = require("../controllers/users.js");
+const multer = require("multer");
+const { storage } = require("../cloudConfig");
+
+const upload = multer({
+    storage,
+    limits: {
+        fileSize: 2 * 1024 * 1024,
+    },
+});
 
 const createMailTransporter = () => {
     const smtpHost = process.env.SMTP_HOST;
@@ -67,6 +76,13 @@ router.post("/profile/full-name", isLoggedIn, wrapAsync(userController.updateFul
 router.post("/profile/date-of-birth", isLoggedIn, wrapAsync(userController.updateDateOfBirth));
 router.post("/profile/email", isLoggedIn, wrapAsync(userController.updateEmail));
 router.post("/profile/password", isLoggedIn, wrapAsync(userController.updatePassword));
+router.post(
+    "/profile/payment-settings",
+    isLoggedIn,
+    isAdmin,
+    upload.single("payment[qrImage]"),
+    wrapAsync(userController.updatePaymentSettingsFromProfile)
+);
 router.post(
     "/profile/wishlist/:listingId/add",
     isLoggedIn,

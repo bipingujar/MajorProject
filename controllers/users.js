@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const User = require("../models/user");
 const Listing = require("../models/listing");
+const PaymentSettings = require("../models/paymentSettings");
+const { cloudinary } = require("../cloudConfig");
 
 module.exports.renderSignupform = (req, res) => {
     res.render("users/signup.ejs");
@@ -57,7 +59,9 @@ module.exports.renderProfile = async (req, res) => {
         owner: { $ne: req.user._id },
     }).limit(6);
 
-    res.render("users/profile.ejs", { user, suggestedListings, ownerListings });
+    const paymentSettings = user.isAdmin ? await PaymentSettings.findOne({}) : null;
+
+    res.render("users/profile.ejs", { user, suggestedListings, ownerListings, paymentSettings });
 };
 
 module.exports.updateFullName = async (req, res) => {
@@ -140,6 +144,43 @@ module.exports.updatePassword = async (req, res) => {
         req.flash("error", "Current password is incorrect.");
         return res.redirect("/profile");
     }
+};
+
+module.exports.updatePaymentSettingsFromProfile = async (req, res) => {
+    const upiId = String(req.body?.payment?.upiId || "").trim();
+    const qrFile = req.file;
+
+    let paymentSettings = await PaymentSettings.findOne({});
+    if (!paymentSettings) {
+        paymentSettings = new PaymentSettings({});
+    }
+
+    const hasQrAfterUpdate = Boolean(qrFile || paymentSettings.qrImage?.url);
+    if (!upiId && !hasQrAfterUpdate) {
+        req.flash("error", "Add a UPI ID or upload a QR image.");
+        return res.redirect("/profile");
+    }
+
+    paymentSettings.upiId = upiId;
+
+    if (qrFile) {
+        if (paymentSettings.qrImage?.filename) {
+            try {
+                await cloudinary.uploader.destroy(paymentSettings.qrImage.filename);
+            } catch (err) {
+                // Ignore cleanup failure and continue with new image save.
+            }
+        }
+
+        paymentSettings.qrImage = {
+            url: qrFile.path,
+            filename: qrFile.filename,
+        };
+    }
+
+    await paymentSettings.save();
+    req.flash("success", "Payment settings updated successfully.");
+    return res.redirect("/profile");
 };
 
 module.exports.addToWishlistFromProfile = async (req, res) => {
