@@ -24,7 +24,6 @@ const createMailTransporter = () => {
     const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
     const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
 
-    // Option 1: custom SMTP
     if (smtpHost && smtpUser && smtpPass) {
         return nodemailer.createTransport({
             host: smtpHost,
@@ -37,7 +36,6 @@ const createMailTransporter = () => {
         });
     }
 
-    // Option 2: Gmail shortcut
     const gmailUser = process.env.GMAIL_USER || smtpUser;
     const gmailPass = process.env.GMAIL_APP_PASSWORD || smtpPass;
     if (gmailUser && gmailPass) {
@@ -57,6 +55,8 @@ router
     .route("/signup")
     .get(userController.renderSignupform)
     .post(wrapAsync(userController.signup));
+
+router.get("/verify-email/:token", wrapAsync(userController.verifyEmail));
 
 router
     .route("/login")
@@ -118,6 +118,8 @@ router.post(
             return res.redirect("/forgot-password");
         }
 
+        const transporter = createMailTransporter();
+
         const otp = String(crypto.randomInt(100000, 1000000));
         const hashedOtp = crypto
             .createHash("sha256")
@@ -129,8 +131,6 @@ router.post(
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
         await user.save();
-
-        const transporter = createMailTransporter();
 
         if (!transporter) {
             user.resetPasswordOtpHash = undefined;

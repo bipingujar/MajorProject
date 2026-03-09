@@ -12,6 +12,12 @@ const userSchema = new mongoose.Schema({
   dateOfBirth: Date,
   email: String,
   password: String,
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  emailVerificationTokenHash: String,
+  emailVerificationExpires: Date,
   isAdmin: {
     type: Boolean,
     default: false,
