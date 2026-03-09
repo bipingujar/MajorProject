@@ -414,6 +414,21 @@ html[data-theme="dark"] {
     width: 100%;
 }
 
+.upi-pay-info-box {
+    border: 1px dashed #cfcfcf;
+    border-radius: 10px;
+    padding: 0.7rem;
+    margin-bottom: 0.9rem;
+    background: #fafafa;
+}
+
+.upi-pay-qr-img {
+    width: 170px;
+    max-width: 100%;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+}
+
 .admin-payments-wrap {
     max-width: 1080px;
     margin: 1.2rem auto 2rem;
@@ -442,6 +457,13 @@ html[data-theme="dark"] {
     padding: 0.65rem;
     margin-bottom: 0.75rem;
     background: #fafafa;
+}
+
+.admin-upi-qr-preview {
+    width: 180px;
+    max-width: 100%;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
 }
 
 @media (max-width: 768px) {

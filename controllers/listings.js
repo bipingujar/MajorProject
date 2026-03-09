@@ -1,5 +1,6 @@
 const Listing = require("../models/listing");
 const User = require("../models/user");
+const PaymentSettings = require("../models/paymentSettings");
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const crypto = require("crypto");
 const https = require("https");
@@ -531,6 +532,8 @@ module.exports.renderPaymentPage = async (req, res) => {
         parsed.checkOut
     );
 
+    const paymentSettings = await PaymentSettings.findOne({}).select("upiId qrImage");
+
     return res.render("listings/payment.ejs", {
         listing,
         booking: {
@@ -542,6 +545,7 @@ module.exports.renderPaymentPage = async (req, res) => {
             amountPaise,
         },
         razorpayKeyId: process.env.RAZORPAY_KEY_ID || "",
+        paymentSettings,
     });
 };
 

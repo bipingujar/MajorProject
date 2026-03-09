@@ -1,4 +1,6 @@
 const Listing = require("../models/listing");
+const PaymentSettings = require("../models/paymentSettings");
+const { cloudinary } = require("../cloudConfig");
 
 module.exports.renderPaymentsDashboard = async (req, res) => {
     const listings = await Listing.find({
@@ -46,7 +48,9 @@ module.exports.renderPaymentsDashboard = async (req, res) => {
         return bDate - aDate;
     });
 
-    return res.render("admin/payments.ejs", { paymentRows });
+    const paymentSettings = await PaymentSettings.findOne({});
+
+    return res.render("admin/payments.ejs", { paymentRows, paymentSettings });
 };
 
 module.exports.updatePaymentDetails = async (req, res) => {
@@ -74,5 +78,42 @@ module.exports.updatePaymentDetails = async (req, res) => {
 
     await listing.save();
     req.flash("success", "Payment details updated.");
+    return res.redirect("/admin/payments");
+};
+
+module.exports.updatePaymentSettings = async (req, res) => {
+    const upiId = String(req.body?.payment?.upiId || "").trim();
+    const qrFile = req.file;
+
+    let paymentSettings = await PaymentSettings.findOne({});
+    if (!paymentSettings) {
+        paymentSettings = new PaymentSettings({});
+    }
+
+    const hasQrAfterUpdate = Boolean(qrFile || paymentSettings.qrImage?.url);
+    if (!upiId && !hasQrAfterUpdate) {
+        req.flash("error", "Add a UPI ID or upload a QR image.");
+        return res.redirect("/admin/payments");
+    }
+
+    paymentSettings.upiId = upiId;
+
+    if (qrFile) {
+        if (paymentSettings.qrImage?.filename) {
+            try {
+                await cloudinary.uploader.destroy(paymentSettings.qrImage.filename);
+            } catch (err) {
+                // Ignore cleanup failure and keep progressing with new image.
+            }
+        }
+
+        paymentSettings.qrImage = {
+            url: qrFile.path,
+            filename: qrFile.filename,
+        };
+    }
+
+    await paymentSettings.save();
+    req.flash("success", "Payment settings updated successfully.");
     return res.redirect("/admin/payments");
 };

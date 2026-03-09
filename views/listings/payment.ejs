@@ -50,6 +50,18 @@
                     </label>
                 </div>
 
+                <% if (paymentSettings && (paymentSettings.upiId || paymentSettings.qrImage?.url)) { %>
+                    <div class="upi-pay-info-box">
+                        <p class="mb-1 fw-semibold">Pay to Admin</p>
+                        <% if (paymentSettings.upiId) { %>
+                            <p class="mb-2"><strong>UPI ID:</strong> <%= paymentSettings.upiId %></p>
+                        <% } %>
+                        <% if (paymentSettings.qrImage?.url) { %>
+                            <img src="<%= paymentSettings.qrImage.url %>" alt="Admin UPI QR" class="upi-pay-qr-img" />
+                        <% } %>
+                    </div>
+                <% } %>
+
                 <button type="button" class="booking-check-btn payment-submit-btn" id="payNowBtn">
                     Pay & Reserve
                 </button>
